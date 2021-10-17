@@ -357,6 +357,34 @@ def main():
     # Reduce paths to only those that were removed or changed by the user
     paths = [p for p in Path.paths if p.path != p.newpath or p.copies]
 
+    def prompt_for_confirmation():
+        # add notes first.
+        for p in paths:
+            # Lazy eval the next path value
+            p.note = ' recursively' if p.is_dir and any(p.path.iterdir()) else ''
+
+        # Pass 2: Delete all removed dirs, if empty or recursive delete.
+        for p in paths:
+            if not p.newpath:
+                print(f'remove {p.diagrepr}{p.note}')
+
+        # Pass 3. Rename all temp files and dirs to final target, and make
+        # copies.
+        for p in paths:
+            appdash = '/' if p.is_dir else ''
+            if p.newpath:
+                print(f'rename {p.diagrepr} to {p.newpath}{appdash}')
+
+            for c in p.copies:
+                print(f'copied {p.diagrepr} to {c}{appdash}{p.note}')
+
+        # ask for user confirmation and only proceeds on enter pressed.
+        return input('perform above actions?') == ''
+
+    if not prompt_for_confirmation():
+        print('user aborted. no actions taken.')
+        return
+
     # Pass 1: Rename all moved files & dirs to temps, delete all removed
     # files.
     for p in paths:
