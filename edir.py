@@ -358,6 +358,8 @@ def main():
     paths = [p for p in Path.paths if p.path != p.newpath or p.copies]
 
     def prompt_for_confirmation():
+        has_actions = False
+
         # add notes first.
         for p in paths:
             # Lazy eval the next path value
@@ -367,6 +369,7 @@ def main():
         for p in paths:
             if not p.newpath:
                 print(f'remove {p.diagrepr}{p.note}')
+                has_actions = True
 
         # Pass 3. Rename all temp files and dirs to final target, and make
         # copies.
@@ -374,12 +377,18 @@ def main():
             appdash = '/' if p.is_dir else ''
             if p.newpath:
                 print(f'rename {p.diagrepr} to {p.newpath}{appdash}')
+                has_actions = True
 
             for c in p.copies:
                 print(f'copied {p.diagrepr} to {c}{appdash}{p.note}')
+                has_actions = True
 
         # ask for user confirmation and only proceeds on enter pressed.
-        return input('perform above actions?') == ''
+        if has_actions:
+            return input('perform above actions?') == ''
+        else:
+            print('no actions to perform.')
+            return False
 
     if not prompt_for_confirmation():
         print('user aborted. no actions taken.')
