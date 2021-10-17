@@ -385,14 +385,13 @@ def main():
 
         # ask for user confirmation and only proceeds on enter pressed.
         if has_actions:
-            return input('perform above actions?') == ''
+            if input('perform above actions?') == '':
+                print('user aborted. no actions taken.')
+                sys.exit(1)
         else:
             print('no actions to perform.')
-            return False
-
-    if not prompt_for_confirmation():
-        print('user aborted. no actions taken.')
-        return
+            sys.exit(1)
+    prompt_for_confirmation()
 
     # Pass 1: Rename all moved files & dirs to temps, delete all removed
     # files.
