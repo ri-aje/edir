@@ -385,7 +385,7 @@ def main():
 
         # ask for user confirmation and only proceeds on enter pressed.
         if has_actions:
-            if input('perform above actions?') == '':
+            if input('perform above actions?') != '':
                 print('user aborted. no actions taken.')
                 sys.exit(1)
         else:
